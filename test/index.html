@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<title>Test</title>
+<script src="../src/a7.js"></script>
+</head>
+<script>
+    A7.ajax({ url: 'https://abi7.com', timeout: 50 })
+        .done(data => console.log('done', data))
+        .always(() => console.log('always'))
+        .fail(() => console.log('fail'))
+        .timeout(() => console.log('timeout'));
+</script>
+
+<body>
+</body>
+
+</html>

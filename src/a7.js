@@ -235,9 +235,8 @@
 			const headers = options.headers || {};
 			const timeout = options.timeout;
 
-
 			let timeoutId;
-			const timeoutPromise = new Promise((_, reject) => {
+			let timeoutPromise = new Promise((_, reject) => {
 				if (timeout) {
 					timeoutId = setTimeout(() => {
 						reject(new Error('Request timed out'));
@@ -262,7 +261,7 @@
 
 			const requestPromise = fetch(url, fetchOptions);
 
-			const promise = Promise.race([requestPromise, timeoutPromise])
+			let promise = Promise.race([requestPromise, timeoutPromise])
 				.then(response => {
 					clearTimeout(timeoutId);
 					if (!response.ok) {
@@ -275,12 +274,26 @@
 					throw error;
 				});
 
-			return {
-				done: callback => promise.then(callback),
-				fail: callback => promise.catch(callback),
-				always: callback => promise.finally(callback),
-				timeout: callback => timeoutPromise.then(() => { }).catch(callback) // Empty then to handle only timeouts
+			const api = {
+				done: function (callback) {
+					promise = promise.then(callback);
+					return api;
+				},
+				fail: function (callback) {
+					promise = promise.catch(callback);
+					return api;
+				},
+				always: function (callback) {
+					promise = promise.finally(callback);
+					return api;
+				},
+				timeout: function (callback) {
+					timeoutPromise.then(() => { }).catch(callback); // Empty then to handle only timeouts
+					return api;
+				}
 			};
+
+			return api;
 		}
 
 		/**
