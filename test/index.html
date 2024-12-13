@@ -3,15 +3,30 @@
 <title>Test</title>
 <script src="../src/a7.js"></script>
 </head>
-<script>
-    A7.ajax({ url: 'https://abi7.com', timeout: 50 })
-        .done(data => console.log('done', data))
-        .always(() => console.log('always'))
-        .fail(() => console.log('fail'))
-        .timeout(() => console.log('timeout'));
-</script>
 
 <body>
+
+    <script>
+
+        // Load multiple modules with dependencies
+        A7.loadModules({
+            'moduleA': { js: './js/bundle1.js' },
+            'moduleB': { js: './js/bundle2.js', dependsOn: 'moduleA' },
+            'moduleD': { css: './css/index.css', dependsOn: 'moduleB' },
+            'moduleE': { css: './css/fonts.css', dependsOn: 'moduleB' }
+        });
+
+        A7.on('moduleLoaded', (name, module) => {
+            //console.log(A7.getModule('asss'));
+        });
+
+        document.body.data('key', 123);
+        //document.body.removeData('key');
+        console.log(document.body.data('key'));
+
+
+    </script>
+
 </body>
 
 </html>

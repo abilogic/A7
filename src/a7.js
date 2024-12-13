@@ -211,16 +211,54 @@
 		}
 
 		/**
-		 * Makes an AJAX request.
-		 *
-		 * @param {object} options - Configuration object for the request.
-		 * @param {string} options.url - The URL to request.
-		 * @param {string} [options.method='GET'] - The HTTP method.
-		 * @param {object} [options.data] - The data to send with the request.
-		 * @param {object} [options.headers] - Custom headers.
-		 * @param {number} [options.timeout] - Timeout in milliseconds.
-		 * @returns {object} - An object with `done`, `fail`, `always`, and `timeout` methods for handling the response.
-		 */
+		* Merges new options into default options, handling nested objects and preserving references.
+		* This method recursively merges properties from the `newOptions` object into the `defaultOptions` object.
+		* It creates a shallow copy of the `defaultOptions` to avoid modifying the original object.
+		* For nested objects, it recursively calls itself to merge deeper levels.
+		* For primitive values and arrays, it overwrites the default value with the new value.
+		*
+		* @param {object} defaultOptions - The base object containing default options.
+		* @param {object} newOptions - The object containing new options to merge.
+		* @returns {object} A new object with merged options.
+		*/
+		mergeOptions(defaultOptions, newOptions) {
+			const merged = { ...defaultOptions };
+
+			for (const key in newOptions) {
+				if (newOptions.hasOwnProperty(key)) {
+					if (
+						typeof defaultOptions[key] === 'object' &&
+						defaultOptions[key] !== null &&
+						typeof newOptions[key] === 'object' &&
+						newOptions[key] !== null &&
+						!Array.isArray(defaultOptions[key]) &&
+						!Array.isArray(newOptions[key])
+					) {
+						// Recursive merge for nested objects
+						merged[key] = this.mergeOptions(
+							{ ...defaultOptions[key] },
+							newOptions[key]
+						);
+					} else {
+						// Simple assignment for primitives and arrays
+						merged[key] = newOptions[key];
+					}
+				}
+			}
+			return merged;
+		}
+
+		/**
+		* Makes an AJAX request.
+		*
+		* @param {object} options - Configuration object for the request.
+		* @param {string} options.url - The URL to request.
+		* @param {string} [options.method='GET'] - The HTTP method.
+		* @param {object} [options.data] - The data to send with the request.
+		* @param {object} [options.headers] - Custom headers.
+		* @param {number} [options.timeout] - Timeout in milliseconds.
+		* @returns {object} - An object with `done`, `fail`, `always`, and `timeout` methods for handling the response.
+		*/
 		ajax(options) {
 			if (!options || typeof options !== 'object') {
 				throw new Error('Invalid argument: options must be an object.');

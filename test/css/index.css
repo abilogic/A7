@@ -1,0 +1,120 @@
+main {
+	flex: 1;
+	max-height: calc(100% - var(--header-height));
+	position: relative;
+	padding: var(--abi7-border-radius) 0;
+	z-index: var(--zidx-main);
+}
+
+main::before {
+	content: '';
+	background-image: url('../../images/bg-monitoring-bw.png');
+	background-size: cover;
+	background-color: var(--abi7-cl-main);
+	background-blend-mode: luminosity;
+	background-position: 50%;
+	background-repeat: no-repeat;
+	opacity: 0.12;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+#app {
+	align-items: stretch;
+	border-radius: 0;
+}
+
+#app main::before {
+	background-image: none;
+}
+
+#app-box {
+	flex: 1;
+	position: relative;
+	margin: 0 var(--abi7-border-radius);
+	z-index: var(--zidx-section);
+
+}
+
+#app-box>div,
+#app-box>div>div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	width: 100%;
+}
+
+#app-box-dialogs>div {
+	background-color: var(--abi7-cl-background);
+}
+
+html.md1 #app-box-dialogs>div {
+	--dlg-padding-top: 0 !important;
+	--dlg-header-height: 50px !important;
+}
+
+#app-box-pages {
+	z-index: var(--zidx-section-pages);
+}
+
+#app-box-pages>div {
+	opacity: 0;
+}
+
+#app-box-pages.loaded>div {
+	transition: opacity 1s;
+	opacity: 1;
+}
+
+#app-box-dialogs {
+	/*
+	position: fixed !important;
+    top: var(--header-height) !important;
+    height: calc(100% - var(--header-height)) !important;
+	*/
+	z-index: var(--zidx-section-dialogs);
+}
+
+#app-box-dialogs>div.active>div.app-dialog-overlay {
+	position: absolute;
+	top: -500px;
+	left: -500px;
+	right: -500px;
+	bottom: -500px;
+	z-index: -1;
+}
+
+#app-box-dialogs:empty {
+	pointer-events: none;
+}
+
+html.md1 #app-box-dialogs .dlg-panel-top {
+	background-color: transparent !important;
+	margin-left: -15px;
+	margin-right: -15px;
+	border-bottom: 1px solid var(--abi7-cl-border);
+}
+
+
+/* переназначение стилей сторонних библиотек */
+
+.MCP_preview,
+.MCP_preview_new_color {
+	border-radius: 0 !important;
+}
+
+/* сброс стилей для окна предварительного просмотра печати */
+
+@media print {
+
+	html,
+	body {
+		all: unset !important;
+	}
+}

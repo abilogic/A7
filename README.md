@@ -101,8 +101,52 @@ const a7 = new A7({
 });
 ```
 
-
 ### Utility Methods
+
+*   **`A7.mergeOptions(defaultOptions, newOptions)`:** Merges new options into default options, handling nested objects and preserving references.
+    *   `defaultOptions` (object): The base object containing default options.
+    *   `newOptions` (object): The object containing new options to merge.
+    *   Returns a new object with merged options.
+
+    This method recursively merges properties from the `newOptions` object into the `defaultOptions` object. It creates a shallow copy of the `defaultOptions` to avoid modifying the original object. For nested objects, it recursively calls itself to merge deeper levels. For primitive values and arrays, it overwrites the default value with the new value.
+
+    ```javascript
+    const defaultOptions = {
+      color: 'blue',
+      size: 10,
+      nested: {
+        enabled: true,
+        value: 'default'
+      },
+      items: [1, 2, 3],
+      callback: () => console.log('default callback')
+    };
+
+    const newOptions = {
+      color: 'red',
+      size: 15,
+      nested: {
+        value: 'new'
+      },
+      items: [4, 5],
+      newProperty: 'added',
+      callback: () => console.log('new callback')
+    };
+
+    const mergedOptions = A7.mergeOptions(defaultOptions, newOptions);
+    console.log(mergedOptions);
+    /*
+    Output:
+    {
+      color: 'red',
+      size: 15,
+      nested: { enabled: true, value: 'new' },
+      items: [ 4, 5 ],
+      callback: [Function: callback],
+      newProperty: 'added'
+    }
+    */
+    ```
 
 *   **`A7.getModule(name)`:** Retrieves the status of a loaded module.  See Module Loading for details.
 *   **`A7.debounce(func, delay)`:** Creates a debounced version of a function.
@@ -110,6 +154,17 @@ const a7 = new A7({
     *   `delay` (number): The delay in milliseconds.
     *   Returns the debounced function.
 
+### Example: Debouncing a Function
+
+```javascript
+function myFunction() {
+  console.log('Function executed!');
+}
+
+const debouncedFunction = A7.debounce(myFunction, 300); // Debounce by 300ms
+
+window.addEventListener('scroll', debouncedFunction); // Call the debounced function on scroll
+```
 
 ## Examples
 
@@ -220,18 +275,6 @@ A7.ajax({ url: '/api/users' })
     background-color: lightgreen;
   }
 </style>
-```
-
-### Example: Debouncing a Function
-
-```javascript
-function myFunction() {
-  console.log('Function executed!');
-}
-
-const debouncedFunction = A7.debounce(myFunction, 300); // Debounce by 300ms
-
-window.addEventListener('scroll', debouncedFunction); // Call the debounced function on scroll
 ```
 
 ## Contributing
