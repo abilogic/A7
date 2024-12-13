@@ -1,4 +1,3 @@
-```markdown
 # A7 Framework: Lightweight and Powerful JavaScript for Modern Web Apps
 
 A7 is a lean, yet powerful JavaScript framework designed to streamline the development of responsive and dynamic web applications.  It provides essential tools for managing modules, handling events, manipulating DOM data, making AJAX requests, and more, all while remaining incredibly lightweight and dependency-free.  A7 empowers you to build modern web experiences with less code and greater efficiency.
@@ -241,4 +240,3 @@ Contributions are welcome! Feel free to submit pull requests or open issues.
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-```
