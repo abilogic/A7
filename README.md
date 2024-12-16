@@ -255,8 +255,7 @@ const a7 = new A7({
     *   `screenHeight`: The height of the user's screen in pixels.
 
 ```javascript
-const website = new Website();
-const browserSettings = website.getBrowserSettings();
+const browserSettings = A7.getBrowserSettings();
 console.log(browserSettings);
 /*
 Expected Output (example):
