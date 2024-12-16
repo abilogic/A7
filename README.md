@@ -14,10 +14,10 @@ A7 is a lean, yet powerful JavaScript framework designed to streamline the devel
 
 ## Installation
 
-Simply copy the `a7.js` file into your project and include it in your HTML:
+Simply copy the `A7.js` file into your project and include it in your HTML:
 
 ```html
-<script src="a7.js"></script>
+<script src="A7.js"></script>
 ```
 
 The `A7` object will be globally available immediately after the script is included.
