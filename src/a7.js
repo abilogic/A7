@@ -14,6 +14,10 @@
  */
 (function () {
 	const elementData = new WeakMap();
+	const defaultConfig = {
+		globalName: 'A7',
+		version: '1.0.0'
+	}
 
 	class A7 {
 		constructor() {
@@ -587,6 +591,25 @@
 		}
 	}
 
-	// Initialize the framework and make it globally available
-	window.A7 = new A7();
+	// Check if a global configuration object exists
+	if (window.A7Config && typeof window.A7Config === 'object') {
+		// Merge the user's config with the default config
+		const config = Object.assign({}, defaultConfig, window.A7Config);
+
+		// Check if the user-defined global name is available
+		if (window[config.globalName]) {
+			console.error('A7: Global name "' + config.globalName + '" is already in use. Please use another name.');
+			return;
+		}
+
+		// Assign the library to the user-defined global name
+		window[config.globalName] = new A7();
+	} else {
+		// Use the default global name
+		if (window[defaultConfig.globalName]) {
+			console.error('A7: Global name "' + defaultConfig.globalName + '" is already in use. Please use A7Config to set another name.');
+			return;
+		}
+		window[defaultConfig.globalName] = new A7();
+	}
 })();                
