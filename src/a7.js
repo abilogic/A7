@@ -566,12 +566,24 @@
 		}
 
 		/**
-		 * Creates a debounced version of a function.
-		 *
-		 * @param {function} func - The function to debounce.
-		 * @param {number} delay - The delay in milliseconds.
-		 * @returns {function} - The debounced function.
+		 * Retrieves basic browser settings as an object.
 		 */
+		getBrowserSettings() {
+			return {
+				language: navigator.language,
+				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+				screenWidth: window.screen.width,
+				screenHeight: window.screen.height,
+			};
+		}
+
+		/**
+		* Creates a debounced version of a function.
+		*
+		* @param {function} func - The function to debounce.
+		* @param {number} delay - The delay in milliseconds.
+		* @returns {function} - The debounced function.
+		*/
 		debounce(func, delay) {
 			if (typeof func !== 'function') {
 				console.error('Invalid argument: func must be a function.');

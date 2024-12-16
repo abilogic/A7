@@ -39,6 +39,27 @@ The `A7` object will be globally available immediately after the script is inclu
     *   `name` (string): The name of the module.
     *   Returns the module object (with `loading`, `loaded`, `data`, and `error` properties) or `undefined` if the module is not found.
 
+```javascript
+// Load a single module
+A7.loadModule('myModule', { js: 'my-module.js' })
+  .then(module => {
+    console.log('Module loaded:', module.data);
+    MyModule.init(); // Initialize the module (if it has an init function)
+  })
+  .catch(error => console.error('Module load error:', error));
+
+
+// Load multiple modules with dependencies
+A7.loadModules({
+    'moduleA': { js: 'module-a.js' },
+    'moduleB': { js: 'module-b.js', dependsOn: 'moduleA' }
+}).then(modules => {
+    console.log('Modules loaded:', modules);
+    ModuleA.init();
+    ModuleB.init();
+}).catch(error => console.error('Modules load error:', error));
+```
+
 ### Event Handling
 
 *   **`A7.on(event, callback)`:** Subscribes to an event.
@@ -53,6 +74,23 @@ The `A7` object will be globally available immediately after the script is inclu
     *   `event` (string): The event name.
     *   `...args`: Arguments to pass to the event handlers.  Available events: `moduleLoaded`, `moduleError`, `modulesLoaded`, `modulesError`, `moduleLoadedInGroup`, `breakpointChange`.
 
+```javascript
+// Subscribe to an event
+A7.on('myCustomEvent', (data) => {
+  console.log('My custom event triggered:', data);
+});
+
+// Trigger the event
+A7.trigger('myCustomEvent', { message: 'Hello from A7!' });
+
+
+// Using breakpoint change event
+A7.on('breakpointChange', breakpoint => {
+    console.log('Breakpoint changed to:', breakpoint); // xs, sm, md, lg, or xl
+    // Add your breakpoint-specific logic here
+});
+```
+
 ### DOM Data Manipulation
 
 *   **`element.data(key, value)`:** Sets or gets data associated with a DOM element.
@@ -63,6 +101,26 @@ The `A7` object will be globally available immediately after the script is inclu
 *   **`element.removeData(key)`:** Removes data associated with a DOM element.
     *   `key` (string, optional): The key to remove. If omitted, all data is removed.
     *   Returns the element (for chaining).
+
+```javascript
+const element = document.getElementById('myElement');
+
+// Store data
+element.data('clicks', 0);
+
+element.addEventListener('click', () => {
+  const clicks = element.data('clicks') || 0;
+  element.data('clicks', clicks + 1);
+  console.log('Clicks:', element.data('clicks
+));
+});
+
+// Retrieve all data
+console.log(element.data()); // { clicks: ... }
+
+// Remove data
+element.removeData('clicks');
+```
 
 ### AJAX Requests
 
@@ -78,6 +136,28 @@ The `A7` object will be globally available immediately after the script is inclu
         *   `fail(callback)`: Executes the callback on request failure (network error or non-2xx status code). The callback receives an `Error` object.
         *   `always(callback)`: Executes the callback regardless of success or failure.
         *   `timeout(callback)`: Executes the callback if the request times out. The callback receives an `Error` object.
+
+```javascript
+A7.ajax({
+    url: '/api/data',
+    method: 'POST',
+    data: { name: 'A7 User', message: 'Hello API!' },
+    timeout: 3000 // 3-second timeout
+}).done(data => {
+    console.log('Success:', data);
+}).fail(error => {
+    console.error('Error:', error.message);
+}).always(() => {
+    console.log('Request complete (success or error)');
+}).timeout(() => {
+    console.warn('Request timed out!');
+});
+
+
+A7.ajax({ url: '/api/users' })
+  .done(users => console.log("Users:", users))
+  .fail(err => console.error("Failed to fetch users:", err));
+```
 
 ### Breakpoint Handling
 
@@ -99,6 +179,25 @@ const a7 = new A7({
     xl: 1200
   }
 });
+```
+
+```html
+<div class="my-element">This element will change style based on breakpoint.</div>
+
+<style>
+  .my-element {
+    padding: 20px;
+    background-color: lightblue;
+  }
+
+  html.a7-breakpoint-sm .my-element {
+    background-color: lightcoral;
+  }
+
+  html.a7-breakpoint-lg .my-element {
+    background-color: lightgreen;
+  }
+</style>
 ```
 
 ### Utility Methods
@@ -148,13 +247,32 @@ const a7 = new A7({
     */
     ```
 
-*   **`A7.getModule(name)`:** Retrieves the status of a loaded module.  See Module Loading for details.
+*   **`A7.getBrowserSettings()`:** Retrieves basic browser settings as an object.
+    *   Returns an object containing browser settings:
+    *   `language`: The browser's language setting (e.g., "en-US").
+    *   `timezone`: The browser's timezone (e.g., "America/New_York").
+    *   `screenWidth`: The width of the user's screen in pixels.
+    *   `screenHeight`: The height of the user's screen in pixels.
+
+```javascript
+const website = new Website();
+const browserSettings = website.getBrowserSettings();
+console.log(browserSettings);
+/*
+Expected Output (example):
+{
+   language: "en-US",
+   timezone: "America/New_York",
+   screenWidth: 1920,
+   screenHeight: 1080
+}
+*/
+```
+
 *   **`A7.debounce(func, delay)`:** Creates a debounced version of a function.
     *   `func` (function): The function to debounce.
     *   `delay` (number): The delay in milliseconds.
     *   Returns the debounced function.
-
-### Example: Debouncing a Function
 
 ```javascript
 function myFunction() {
@@ -164,117 +282,6 @@ function myFunction() {
 const debouncedFunction = A7.debounce(myFunction, 300); // Debounce by 300ms
 
 window.addEventListener('scroll', debouncedFunction); // Call the debounced function on scroll
-```
-
-## Examples
-
-### Example: Loading Modules
-
-```javascript
-// Load a single module
-A7.loadModule('myModule', { js: 'my-module.js' })
-  .then(module => {
-    console.log('Module loaded:', module.data);
-    MyModule.init(); // Initialize the module (if it has an init function)
-  })
-  .catch(error => console.error('Module load error:', error));
-
-
-// Load multiple modules with dependencies
-A7.loadModules({
-    'moduleA': { js: 'module-a.js' },
-    'moduleB': { js: 'module-b.js', dependsOn: 'moduleA' }
-}).then(modules => {
-    console.log('Modules loaded:', modules);
-    ModuleA.init();
-    ModuleB.init();
-}).catch(error => console.error('Modules load error:', error));
-```
-
-### Example: Event Handling
-
-```javascript
-// Subscribe to an event
-A7.on('myCustomEvent', (data) => {
-  console.log('My custom event triggered:', data);
-});
-
-// Trigger the event
-A7.trigger('myCustomEvent', { message: 'Hello from A7!' });
-
-
-// Using breakpoint change event
-A7.on('breakpointChange', breakpoint => {
-    console.log('Breakpoint changed to:', breakpoint); // xs, sm, md, lg, or xl
-    // Add your breakpoint-specific logic here
-});
-```
-
-### Example: DOM Data Manipulation
-
-```javascript
-const element = document.getElementById('myElement');
-
-// Store data
-element.data('clicks', 0);
-
-element.addEventListener('click', () => {
-  const clicks = element.data('clicks') || 0;
-  element.data('clicks', clicks + 1);
-  console.log('Clicks:', element.data('clicks
-));
-});
-
-// Retrieve all data
-console.log(element.data()); // { clicks: ... }
-
-// Remove data
-element.removeData('clicks');
-```
-
-### Example: AJAX Requests
-
-```javascript
-A7.ajax({
-    url: '/api/data',
-    method: 'POST',
-    data: { name: 'A7 User', message: 'Hello API!' },
-    timeout: 3000 // 3-second timeout
-}).done(data => {
-    console.log('Success:', data);
-}).fail(error => {
-    console.error('Error:', error.message);
-}).always(() => {
-    console.log('Request complete (success or error)');
-}).timeout(() => {
-    console.warn('Request timed out!');
-});
-
-
-A7.ajax({ url: '/api/users' })
-  .done(users => console.log("Users:", users))
-  .fail(err => console.error("Failed to fetch users:", err));
-```
-
-### Example: Responsive Design
-
-```html
-<div class="my-element">This element will change style based on breakpoint.</div>
-
-<style>
-  .my-element {
-    padding: 20px;
-    background-color: lightblue;
-  }
-
-  html.a7-breakpoint-sm .my-element {
-    background-color: lightcoral;
-  }
-
-  html.a7-breakpoint-lg .my-element {
-    background-color: lightgreen;
-  }
-</style>
 ```
 
 ## Contributing
